@@ -1,6 +1,6 @@
 {
-  "name": "react-native-lite-image-view",
-  "version": "0.1.0",
+  "name": "react-native-lite-image",
+  "version": "0.2.0",
   "description": "Support for View Image",
   "main": "./lib/module/index.js",
   "types": "./lib/typescript/src/index.d.ts",
@@ -32,7 +32,7 @@
     "!**/.*"
   ],
   "scripts": {
-    "example": "yarn workspace react-native-lite-image-view-example",
+    "example": "yarn workspace react-native-lite-image-example",
     "test": "jest",
     "typecheck": "tsc",
     "lint": "eslint \"**/*.{js,ts,tsx}\"",
@@ -47,14 +47,14 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/lvthong312/react-native-lite-image-view.git"
+    "url": "git+https://github.com/lvthong312/react-native-lite-image.git"
   },
   "author": "Thong Luong <lvthong312@gmail.com> (https://github.com/lvthong312)",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/lvthong312/react-native-lite-image-view/issues"
+    "url": "https://github.com/lvthong312/react-native-lite-image/issues"
   },
-  "homepage": "https://github.com/lvthong312/react-native-lite-image-view#readme",
+  "homepage": "https://github.com/lvthong312/react-native-lite-image#readme",
   "publishConfig": {
     "registry": "https://registry.npmjs.org/"
   },

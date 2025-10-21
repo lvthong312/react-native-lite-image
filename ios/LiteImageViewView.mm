@@ -6,66 +6,59 @@
 #import <react/renderer/components/LiteImageViewViewSpec/RCTComponentViewHelpers.h>
 
 #import "RCTFabricComponentsPlugins.h"
+#import "LiteImageView-Swift.h"
 
 using namespace facebook::react;
 
 @interface LiteImageViewView () <RCTLiteImageViewViewViewProtocol>
-
 @end
 
 @implementation LiteImageViewView {
-    UIView * _view;
+  LiteImageViewUI *_imageView; // ✅ Swift UIView thực thi việc hiển thị
 }
 
-+ (ComponentDescriptorProvider)componentDescriptorProvider
-{
-    return concreteComponentDescriptorProvider<LiteImageViewViewComponentDescriptor>();
++ (ComponentDescriptorProvider)componentDescriptorProvider {
+  return concreteComponentDescriptorProvider<LiteImageViewViewComponentDescriptor>();
 }
 
-- (instancetype)initWithFrame:(CGRect)frame
-{
+- (instancetype)initWithFrame:(CGRect)frame {
   if (self = [super initWithFrame:frame]) {
     static const auto defaultProps = std::make_shared<const LiteImageViewViewProps>();
     _props = defaultProps;
 
-    _view = [[UIView alloc] init];
-
-    self.contentView = _view;
+    // ✅ Gắn UIView Swift làm contentView
+    _imageView = [LiteImageViewUI new];
+    self.contentView = _imageView;
   }
-
   return self;
 }
 
-- (void)updateProps:(Props::Shared const &)props oldProps:(Props::Shared const &)oldProps
-{
-    const auto &oldViewProps = *std::static_pointer_cast<LiteImageViewViewProps const>(_props);
-    const auto &newViewProps = *std::static_pointer_cast<LiteImageViewViewProps const>(props);
+- (void)updateProps:(Props::Shared const &)props oldProps:(Props::Shared const &)oldProps {
+  const auto &oldViewProps = *std::static_pointer_cast<LiteImageViewViewProps const>(_props);
+  const auto &newViewProps = *std::static_pointer_cast<LiteImageViewViewProps const>(props);
+  // ✅ Update cacheTTL
+  if (oldViewProps.cacheTTL != newViewProps.cacheTTL) {
+    _imageView.cacheTTL = newViewProps.cacheTTL;
+  }
+  // ✅ Cập nhật khi source hoặc resizeMode thay đổi
+  if (oldViewProps.source.uri != newViewProps.source.uri ||
+      oldViewProps.resizeMode != newViewProps.resizeMode) {
 
-    if (oldViewProps.color != newViewProps.color) {
-        NSString * colorToConvert = [[NSString alloc] initWithUTF8String: newViewProps.color.c_str()];
-        [_view setBackgroundColor:[self hexStringToColor:colorToConvert]];
+    NSString *uriString = [[NSString alloc] initWithUTF8String:newViewProps.source.uri.c_str()];
+    NSString *resizeMode = nil;
+
+    if (!newViewProps.resizeMode.empty()) {
+      resizeMode = [NSString stringWithUTF8String:newViewProps.resizeMode.c_str()];
     }
 
-    [super updateProps:props oldProps:oldProps];
+    [_imageView loadImage:uriString resizeMode:resizeMode];
+  }
+
+  [super updateProps:props oldProps:oldProps];
 }
 
-Class<RCTComponentViewProtocol> LiteImageViewViewCls(void)
-{
-    return LiteImageViewView.class;
-}
-
-- hexStringToColor:(NSString *)stringToConvert
-{
-    NSString *noHashString = [stringToConvert stringByReplacingOccurrencesOfString:@"#" withString:@""];
-    NSScanner *stringScanner = [NSScanner scannerWithString:noHashString];
-
-    unsigned hex;
-    if (![stringScanner scanHexInt:&hex]) return nil;
-    int r = (hex >> 16) & 0xFF;
-    int g = (hex >> 8) & 0xFF;
-    int b = (hex) & 0xFF;
-
-    return [UIColor colorWithRed:r / 255.0f green:g / 255.0f blue:b / 255.0f alpha:1.0f];
+Class<RCTComponentViewProtocol> LiteImageViewViewCls(void) {
+  return LiteImageViewView.class;
 }
 
 @end

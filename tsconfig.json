@@ -2,7 +2,7 @@
   "compilerOptions": {
     "rootDir": ".",
     "paths": {
-      "react-native-lite-image-view": ["./src/index"]
+      "react-native-lite-image": ["./src/index"]
     },
     "allowUnreachableCode": false,
     "allowUnusedLabels": false,

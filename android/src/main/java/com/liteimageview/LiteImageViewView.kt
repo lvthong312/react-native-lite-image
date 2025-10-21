@@ -2,14 +2,87 @@ package com.liteimageview
 
 import android.content.Context
 import android.util.AttributeSet
-import android.view.View
+import android.widget.ImageView
+import androidx.appcompat.widget.AppCompatImageView
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.bumptech.glide.request.RequestOptions
 
-class LiteImageViewView : View {
-  constructor(context: Context?) : super(context)
-  constructor(context: Context?, attrs: AttributeSet?) : super(context, attrs)
-  constructor(context: Context?, attrs: AttributeSet?, defStyleAttr: Int) : super(
-    context,
-    attrs,
-    defStyleAttr
-  )
+class LiteImageViewView @JvmOverloads constructor(
+  context: Context,
+  attrs: AttributeSet? = null,
+  defStyleAttr: Int = 0
+) : AppCompatImageView(context, attrs, defStyleAttr) {
+
+  /** TTL in seconds (default 1 hour). */
+  var cacheTTL: Long = 3600
+
+  private val prefs = context.getSharedPreferences("LiteImageViewCachePrefs", Context.MODE_PRIVATE)
+  private val keyPrefix = "LiteImageViewCacheTS_"
+
+  init {
+    scaleType = ScaleType.CENTER_CROP
+    adjustViewBounds = true
+    clipToOutline = true
+  }
+
+  fun loadImage(uri: String?, resizeMode: String?) {
+    if (uri.isNullOrEmpty()) {
+      setImageDrawable(null)
+      return
+    }
+
+    // ✅ Apply resize mode
+    when (resizeMode) {
+      "contain" -> scaleType = ScaleType.FIT_CENTER
+      "stretch" -> scaleType = ScaleType.FIT_XY
+      "center" -> scaleType = ScaleType.CENTER
+      else -> scaleType = ScaleType.CENTER_CROP
+    }
+
+    // ✅ Generate cache key + timestamp
+    val cacheKey = uri.hashCode().toString()
+    val tsKey = keyPrefix + cacheKey
+    val now = System.currentTimeMillis() / 1000
+    val timestamp = prefs.getLong(tsKey, 0L)
+
+    // ✅ If image in cache & not expired
+    if (timestamp > 0 && now - timestamp < cacheTTL) {
+      loadWithGlide(uri)
+      return
+    }
+
+    // ❌ Expired or first-time load → clear
+    clearFromCache(uri)
+    prefs.edit().putLong(tsKey, now).apply()
+
+    // ✅ Download and cache
+    loadWithGlide(uri)
+  }
+
+  private fun loadWithGlide(uri: String) {
+    Glide.with(context)
+      .load(uri)
+      .apply(
+        RequestOptions()
+          .diskCacheStrategy(DiskCacheStrategy.ALL)
+          .dontAnimate()
+      )
+      .into(this)
+  }
+
+  private fun clearFromCache(uri: String) {
+    Thread {
+      try {
+        // Remove old entries (this clears all if same key)
+        Glide.get(context).clearDiskCache()
+      } catch (_: Exception) {
+      }
+    }.start()
+  }
+
+  fun clearTimestamps() {
+    prefs.all.keys.filter { it.startsWith(keyPrefix) }
+      .forEach { prefs.edit().remove(it).apply() }
+  }
 }

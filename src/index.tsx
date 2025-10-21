@@ -1,2 +1,2 @@
-export { default as LiteImageViewView } from './LiteImageViewViewNativeComponent';
+export { default as LiteImage } from './LiteImageViewViewNativeComponent';
 export * from './LiteImageViewViewNativeComponent';

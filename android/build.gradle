@@ -18,7 +18,7 @@ buildscript {
 
 apply plugin: "com.android.library"
 apply plugin: "kotlin-android"
-
+apply plugin: 'kotlin-kapt' // Add This Line
 apply plugin: "com.facebook.react"
 
 def getExtOrIntegerDefault(name) {
@@ -74,4 +74,6 @@ def kotlin_version = getExtOrDefault("kotlinVersion")
 dependencies {
   implementation "com.facebook.react:react-android"
   implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+  implementation 'com.github.bumptech.glide:glide:4.16.0' // Add This Line
+  kapt 'com.github.bumptech.glide:compiler:4.16.0' // Add This Line
 }

@@ -1,10 +1,14 @@
-import { View, StyleSheet } from 'react-native';
-import { LiteImageViewView } from 'react-native-lite-image-view';
+import { StyleSheet, View } from 'react-native';
+import { LiteImage } from 'react-native-lite-image';
 
 export default function App() {
   return (
     <View style={styles.container}>
-      <LiteImageViewView color="#32a852" style={styles.box} />
+      <LiteImage
+        source={{ uri: 'https://picsum.photos/315' }}
+        style={styles.box}
+        cacheTTL={5}
+      />
     </View>
   );
 }
@@ -16,8 +20,8 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   box: {
-    width: 60,
-    height: 60,
-    marginVertical: 20,
+    width: 300,
+    height: 300,
+    resizeMode: 'contain',
   },
 });
