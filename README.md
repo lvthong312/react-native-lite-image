@@ -1,6 +1,6 @@
 # react-native-lite-image-view
 
-Support for View Image
+Support for Image Cache 
 
 <p align="center">
   <img src="https://img.shields.io/npm/v/react-native-lite-image?color=green" alt="npm version" />
@@ -48,7 +48,7 @@ export default function App() {
       <LiteImage
         source={{ uri: '...' }}
         style={styles.box}
-        cacheTTL={5}
+        cacheTTL={600} //Cache 60s
       />
     </View>
   );
@@ -74,5 +74,5 @@ const styles = StyleSheet.create({
 | ------------ | ----------------------------------------------- | ------------ | ---------------------------------------------------- |
 | `source`     | `{ uri: string }` or `number`                   | **required** | The image source (remote URL or local file)          |
 | `style`      | `StyleProp<ImageStyle>`                         | -            | The image style (width, height, etc.)                |
-| `cacheTTL`   | `number`                                        | `0`          | Cache duration in minutes (0 = no cache)             |
+| `cacheTTL`   | `number`                                        | `0`          | Cache duration in seconds (0 = no cache)             |
 | `resizeMode` | `'cover' \| 'contain' \| 'stretch' \| 'center'` | `'cover'`    | How the image should be resized to fit the container |

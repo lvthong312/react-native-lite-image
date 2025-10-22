@@ -5,9 +5,9 @@ export default function App() {
   return (
     <View style={styles.container}>
       <LiteImage
-        source={{ uri: 'https://picsum.photos/315' }}
+        source={{ uri: '...' }}
         style={styles.box}
-        cacheTTL={5}
+        cacheTTL={600} // 60p
       />
     </View>
   );
