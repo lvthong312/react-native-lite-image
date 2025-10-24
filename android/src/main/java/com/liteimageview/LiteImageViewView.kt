@@ -2,12 +2,16 @@ package com.liteimageview
 
 import android.content.Context
 import android.util.AttributeSet
-import android.widget.ImageView
+import android.widget.Toast
 import androidx.appcompat.widget.AppCompatImageView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.request.RequestOptions
-
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import android.app.Activity
 class LiteImageViewView @JvmOverloads constructor(
   context: Context,
   attrs: AttributeSet? = null,
@@ -32,7 +36,6 @@ class LiteImageViewView @JvmOverloads constructor(
       return
     }
 
-    // ✅ Apply resize mode
     when (resizeMode) {
       "contain" -> scaleType = ScaleType.FIT_CENTER
       "stretch" -> scaleType = ScaleType.FIT_XY
@@ -40,23 +43,18 @@ class LiteImageViewView @JvmOverloads constructor(
       else -> scaleType = ScaleType.CENTER_CROP
     }
 
-    // ✅ Generate cache key + timestamp
     val cacheKey = uri.hashCode().toString()
     val tsKey = keyPrefix + cacheKey
     val now = System.currentTimeMillis() / 1000
     val timestamp = prefs.getLong(tsKey, 0L)
 
-    // ✅ If image in cache & not expired
     if (timestamp > 0 && now - timestamp < cacheTTL) {
       loadWithGlide(uri)
       return
     }
 
-    // ❌ Expired or first-time load → clear
-    clearFromCache(uri)
+    clearFromCache()
     prefs.edit().putLong(tsKey, now).apply()
-
-    // ✅ Download and cache
     loadWithGlide(uri)
   }
 
@@ -71,13 +69,11 @@ class LiteImageViewView @JvmOverloads constructor(
       .into(this)
   }
 
-  private fun clearFromCache(uri: String) {
+  private fun clearFromCache() {
     Thread {
       try {
-        // Remove old entries (this clears all if same key)
-        Glide.get(context).clearDiskCache()
-      } catch (_: Exception) {
-      }
+        Glide.get(context.applicationContext).clearDiskCache()
+      } catch (_: Exception) {}
     }.start()
   }
 
