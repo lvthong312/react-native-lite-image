@@ -1,4 +1,4 @@
-# react-native-lite-image-view
+# react-native-lite-image
 
 Support for Image Cache
 
@@ -11,7 +11,7 @@ Support for Image Cache
 ## Installation
 
 ```sh
-npm install react-native-lite-image-view react-native-lite-image-control
+npm install react-native-lite-image react-native-lite-image-control
 ```
 
 ## For IOS
