@@ -5,15 +5,13 @@ getAllCache().then((cacheList) => {
   console.log('Cache files:', cacheList);
 });
 preload([
-  'https://picsum.photos/404',
-  'https://picsum.photos/405',
-  'https://picsum.photos/406',
+  'https://.../404',
 ]);
 export default function App() {
   return (
     <View style={styles.container}>
       <LiteImage
-        source={{ uri: 'https://picsum.photos/404' }}
+        source={require('./download-1.jpg')}
         style={styles.box}
         cacheTTL={600}
       />
